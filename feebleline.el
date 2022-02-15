@@ -237,7 +237,8 @@ Returns a pair with desired column and string."
       ;; Activation:
       (progn
         (setq feebleline--home-dir (expand-file-name "~"))
-        (setq feebleline--mode-line-format-previous mode-line-format)
+        (when mode-line-format
+	  (setq feebleline--mode-line-format-previous mode-line-format))
         (setq feebleline--msg-timer
               (run-with-timer 0 feebleline-timer-interval
                               'feebleline--insert-ignore-errors))
