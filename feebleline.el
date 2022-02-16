@@ -238,10 +238,11 @@ Returns a pair with desired column and string."
       (progn
         (setq feebleline--home-dir (expand-file-name "~"))
         (when mode-line-format
-	  (setq feebleline--mode-line-format-previous mode-line-format))
-        (setq feebleline--msg-timer
+	  ;; 保护机制：避免在调用 `load-theme' 的时候二次赋值
+	  (setq feebleline--mode-line-format-previous mode-line-format)
+	  (setq feebleline--msg-timer
               (run-with-timer 0 feebleline-timer-interval
-                              'feebleline--insert-ignore-errors))
+                              'feebleline--insert-ignore-errors)))
         (if feebleline-use-legacy-settings (feebleline-legacy-settings-on)
           (feebleline-default-settings-on))
         (add-hook 'focus-in-hook 'feebleline--insert-ignore-errors))
