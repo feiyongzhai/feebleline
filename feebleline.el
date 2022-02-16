@@ -163,7 +163,6 @@
   "Some default settings that works well with feebleline."
   (setq window-divider-default-bottom-width 1
         window-divider-default-places (quote bottom-only))
-  (setq feebleline--window-divider-previous window-divider-mode)
   (window-divider-mode 1)
   (setq-default mode-line-format nil)
   (walk-windows (lambda (window)
@@ -239,10 +238,11 @@ Returns a pair with desired column and string."
         (setq feebleline--home-dir (expand-file-name "~"))
         (when mode-line-format
 	  ;; 保护机制：避免在调用 `load-theme' 的时候二次赋值
+	  (setq feebleline--window-divider-previous (if window-divider-mode t -1))
 	  (setq feebleline--mode-line-format-previous mode-line-format)
 	  (setq feebleline--msg-timer
-              (run-with-timer 0 feebleline-timer-interval
-                              'feebleline--insert-ignore-errors)))
+		(run-with-timer 0 feebleline-timer-interval
+				'feebleline--insert-ignore-errors)))
         (if feebleline-use-legacy-settings (feebleline-legacy-settings-on)
           (feebleline-default-settings-on))
         (add-hook 'focus-in-hook 'feebleline--insert-ignore-errors))
