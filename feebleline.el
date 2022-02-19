@@ -225,6 +225,9 @@ Returns a pair with desired column and string."
   (with-current-buffer feebleline--minibuf
     (erase-buffer)))
 
+(defun feebleline-remove-mode-line ()
+  "A patch for eaf buffer, Because I find eaf will set mode-line-format by itself."
+  (setq mode-line-format nil))
 
 ;;;###autoload
 (define-minor-mode feebleline-mode
@@ -244,7 +247,9 @@ Returns a pair with desired column and string."
 				'feebleline--insert-ignore-errors)))
         (if feebleline-use-legacy-settings (feebleline-legacy-settings-on)
           (feebleline-default-settings-on))
-        (add-hook 'focus-in-hook 'feebleline--insert-ignore-errors))
+        (add-hook 'focus-in-hook 'feebleline--insert-ignore-errors)
+        (add-hook 'eaf-mode-hook 'feebleline-remove-mode-line)
+	)
     ;; Deactivation:
     (window-divider-mode feebleline--window-divider-previous)
     (set-face-attribute 'mode-line nil :height 1.0)
@@ -254,6 +259,7 @@ Returns a pair with desired column and string."
 	(setq mode-line-format feebleline--mode-line-format-previous)))
     (cancel-timer feebleline--msg-timer)
     (remove-hook 'focus-in-hook 'feebleline--insert-ignore-errors)
+    (remove-hook 'eaf-mode-hook 'feebleline-remove-mode-line)
     (force-mode-line-update)
     (redraw-display)
     (feebleline--clear-echo-area)))
