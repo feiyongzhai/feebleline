@@ -166,10 +166,12 @@
   (setq window-divider-default-bottom-width 1
         window-divider-default-places (quote bottom-only))
   (window-divider-mode 1)
-  (setq-default mode-line-format nil)
+  (setq-default feebleline--mode-line-format-previous mode-line-format)
   (dolist (buf (buffer-list))
     (with-current-buffer buf
-      (setq mode-line-format nil))))
+      (setq-local feebleline--mode-line-format-previous mode-line-format)
+      (setq mode-line-format nil)))
+  (setq-default mode-line-format nil))
 
 (defun feebleline-legacy-settings-on ()
   "Some default settings for EMACS < 25."
@@ -250,7 +252,6 @@ Returns a pair with desired column and string."
         (when mode-line-format
 	  ;; 保护机制：避免在调用 `load-theme' 的时候二次赋值
 	  (setq feebleline--window-divider-previous (if window-divider-mode t -1))
-	  (setq feebleline--mode-line-format-previous mode-line-format)
 	  (setq feebleline--msg-timer
 		(run-with-timer 0 feebleline-timer-interval
 				'feebleline--insert-ignore-errors)))
@@ -262,10 +263,11 @@ Returns a pair with desired column and string."
     ;; Deactivation:
     (window-divider-mode feebleline--window-divider-previous)
     (set-face-attribute 'mode-line nil :height 1.0)
-    (setq-default mode-line-format feebleline--mode-line-format-previous)
+    (setq-default mode-line-format (default-value 'feebleline--mode-line-format-previous))
     (dolist (buf (buffer-list))
       (with-current-buffer buf
-	(setq mode-line-format feebleline--mode-line-format-previous)))
+	(setq mode-line-format
+	      (buffer-local-value 'feebleline--mode-line-format-previous buf))))
     (cancel-timer feebleline--msg-timer)
     (remove-hook 'focus-in-hook 'feebleline--insert-ignore-errors)
     (remove-hook 'eaf-mode-hook 'feebleline-remove-mode-line)
