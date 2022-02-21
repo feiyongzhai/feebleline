@@ -166,7 +166,8 @@
   (setq window-divider-default-bottom-width 1
         window-divider-default-places (quote bottom-only))
   (window-divider-mode 1)
-  (setq-default feebleline--mode-line-format-previous mode-line-format)
+  (setq-default feebleline--mode-line-format-previous
+		(default-value 'mode-line-format))
   (dolist (buf (buffer-list))
     (with-current-buffer buf
       (setq-local feebleline--mode-line-format-previous mode-line-format)
