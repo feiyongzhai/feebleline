@@ -57,6 +57,7 @@
 ;; See source code for inspiration.
 
 ;;; Code:
+(require 'eyebrowse)
 (require 'cl-macs)
 (autoload 'magit-get-current-branch "magit")
 
@@ -161,6 +162,7 @@
 
 (defun feebleline-default-settings-on ()
   "Some default settings that works well with feebleline."
+  (add-hook 'eyebrowse-post-window-switch-hook '+fei-eyebrowse-post-window-switch-hook)
   (setq window-divider-default-bottom-width 1
         window-divider-default-places (quote bottom-only))
   (window-divider-mode 1)
@@ -229,6 +231,13 @@ Returns a pair with desired column and string."
   "A patch for eaf buffer, Because I find eaf will set mode-line-format by itself."
   (setq mode-line-format nil))
 
+(defun +fei-eyebrowse-post-window-switch-hook ()
+  (let* ((window-configs (eyebrowse--get 'window-configs))
+	 (slot (eyebrowse--get 'current-slot))
+         (window-config (assoc slot window-configs))
+         (current-tag (nth 2 window-config)))
+    (message "Workspace [ %s:%s ]" slot (nth 2 window-config))))
+
 ;;;###autoload
 (define-minor-mode feebleline-mode
   "Replace modeline with a slimmer proxy."
@@ -260,6 +269,7 @@ Returns a pair with desired column and string."
     (cancel-timer feebleline--msg-timer)
     (remove-hook 'focus-in-hook 'feebleline--insert-ignore-errors)
     (remove-hook 'eaf-mode-hook 'feebleline-remove-mode-line)
+    (remove-hook 'eyebrowse-post-window-switch-hook '+fei-eyebrowse-post-window-switch-hook)
     (force-mode-line-update)
     (redraw-display)
     (feebleline--clear-echo-area)))
