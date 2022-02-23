@@ -255,9 +255,8 @@ Returns a pair with desired column and string."
 	  (setq feebleline--window-divider-previous (if window-divider-mode t -1))
 	  (setq feebleline--msg-timer
 		(run-with-timer 0 feebleline-timer-interval
-				'feebleline--insert-ignore-errors)))
-        (if feebleline-use-legacy-settings (feebleline-legacy-settings-on)
-          (feebleline-default-settings-on))
+				'feebleline--insert-ignore-errors))
+	  (feebleline-default-settings-on))
         (add-hook 'focus-in-hook 'feebleline--insert-ignore-errors)
         (add-hook 'eaf-mode-hook 'feebleline-remove-mode-line)
 	)
